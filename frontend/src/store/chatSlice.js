@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from '../api/axios';
 
 const initialState = {
   messages: [],
@@ -7,11 +7,12 @@ const initialState = {
   currentChatId: null,
   loading: false,
   error: null,
+  sidebarOpen: false,
 };
 
 export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ message, chatId }, { rejectWithValue }) => {
   try {
-    const response = await axios.post('/api/chat', { message, chatId });
+    const response = await axios.post('/chat', { message, chatId });
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -20,7 +21,7 @@ export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ message
 
 export const fetchHistory = createAsyncThunk('chat/fetchHistory', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('/api/history');
+    const response = await axios.get('/history');
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -29,7 +30,7 @@ export const fetchHistory = createAsyncThunk('chat/fetchHistory', async (_, { re
 
 export const fetchChatMessages = createAsyncThunk('chat/fetchChatMessages', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`/api/chat/${id}`);
+    const response = await axios.get(`/chat/${id}`);
     return { ...response.data, chatId: id };
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -38,7 +39,7 @@ export const fetchChatMessages = createAsyncThunk('chat/fetchChatMessages', asyn
 
 export const deleteChat = createAsyncThunk('chat/deleteChat', async (id, { rejectWithValue }) => {
   try {
-    await axios.delete(`/api/chat/${id}`);
+    await axios.delete(`/chat/${id}`);
     return id;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -61,6 +62,12 @@ const chatSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+    },
+    toggleSidebar: (state) => {
+      state.sidebarOpen = !state.sidebarOpen;
+    },
+    setSidebarOpen: (state, action) => {
+      state.sidebarOpen = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -103,5 +110,5 @@ const chatSlice = createSlice({
   },
 });
 
-export const { addMessage, setCurrentChatId, startNewChat, clearError } = chatSlice.actions;
+export const { addMessage, setCurrentChatId, startNewChat, clearError, toggleSidebar, setSidebarOpen } = chatSlice.actions;
 export default chatSlice.reducer;

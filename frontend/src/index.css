@@ -103,3 +103,65 @@ h1, h2, h3, h4 {
   color: var(--primary) !important;
   transform: scale(1.2);
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+
+  .nav-logo-text {
+    display: none;
+  }
+
+  .navbar-container {
+    margin: 10px !important;
+    padding: 10px 15px !important;
+  }
+
+  .dashboard-container {
+    flex-direction: column !important;
+    padding: 10px !important;
+    height: calc(100vh - 80px) !important;
+    gap: 10px !important;
+  }
+
+  .sidebar-mobile {
+    position: fixed !important;
+    top: 90px;
+    left: 10px;
+    bottom: 10px;
+    z-index: 50;
+    width: 280px !important;
+    transition: transform 0.3s ease;
+    transform: translateX(-110%);
+  }
+
+  .sidebar-mobile.open {
+    transform: translateX(0);
+  }
+
+  .main-chat-area {
+    width: 100%;
+  }
+
+  header h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .chat-messages-container {
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .nav-text {
+    display: none;
+  }
+  
+  .navbar-container {
+    gap: 10px !important;
+  }
+}
+
+

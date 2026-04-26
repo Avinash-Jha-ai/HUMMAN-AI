@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { sendMessage, addMessage, fetchHistory, fetchChatMessages, startNewChat, deleteChat } from '../store/chatSlice';
+import { sendMessage, addMessage, fetchHistory, fetchChatMessages, startNewChat, deleteChat, setSidebarOpen } from '../store/chatSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Sparkles, History, Plus, MessageSquare, Clock, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 
 const Dashboard = () => {
   const [input, setInput] = useState('');
-  const { messages, sessions, currentChatId, loading } = useSelector((state) => state.chat);
+  const { messages, sessions, currentChatId, loading, sidebarOpen } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const scrollRef = useRef();
@@ -35,10 +35,16 @@ const Dashboard = () => {
 
   const handleSelectSession = (id) => {
     dispatch(fetchChatMessages(id));
+    if (window.innerWidth <= 768) {
+      dispatch(setSidebarOpen(false));
+    }
   };
 
   const handleNewChat = () => {
     dispatch(startNewChat());
+    if (window.innerWidth <= 768) {
+      dispatch(setSidebarOpen(false));
+    }
   };
 
   const handleDeleteSession = (e, id) => {
@@ -50,9 +56,27 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - 100px)', gap: '20px', padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
+    <div className="dashboard-container" style={{ display: 'flex', height: 'calc(100vh - 100px)', gap: '20px', padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          onClick={() => dispatch(setSidebarOpen(false))}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 40,
+            display: window.innerWidth <= 768 ? 'block' : 'none'
+          }}
+        />
+      )}
+      
       {/* Sidebar */}
-      <aside className="glass-card" style={{ width: '280px', display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px' }}>
+      <aside className={`glass-card sidebar-mobile ${sidebarOpen ? 'open' : ''}`} style={{ width: '280px', display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px' }}>
         <button 
           onClick={handleNewChat}
           className="btn-primary" 
@@ -112,7 +136,7 @@ const Dashboard = () => {
       </aside>
 
       {/* Main Chat Area */}
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <main className="main-chat-area" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <header style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px' }}>
           <div style={{ background: 'linear-gradient(135deg, var(--secondary), #0047b3)', width: '45px', height: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px var(--secondary-glow)' }}>
             <Bot size={28} color="white" />
@@ -127,7 +151,7 @@ const Dashboard = () => {
 
         <div 
           ref={scrollRef}
-          className="glass-card" 
+          className="glass-card chat-messages-container" 
           style={{ flex: 1, padding: '20px', overflowY: 'auto', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}
         >
           <AnimatePresence>

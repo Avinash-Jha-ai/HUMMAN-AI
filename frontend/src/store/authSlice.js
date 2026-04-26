@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from '../api/axios';
 
 const initialState = {
   user: null,
@@ -11,7 +11,7 @@ const initialState = {
 
 export const register = createAsyncThunk('auth/register', async (formData, { rejectWithValue }) => {
   try {
-    const response = await axios.post('/api/auth/register', formData, {
+    const response = await axios.post('/auth/register', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
@@ -22,7 +22,7 @@ export const register = createAsyncThunk('auth/register', async (formData, { rej
 
 export const verify = createAsyncThunk('auth/verify', async (data, { rejectWithValue }) => {
   try {
-    const response = await axios.post('/api/auth/verify', data);
+    const response = await axios.post('/auth/verify', data);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -31,7 +31,7 @@ export const verify = createAsyncThunk('auth/verify', async (data, { rejectWithV
 
 export const login = createAsyncThunk('auth/login', async (data, { rejectWithValue }) => {
   try {
-    const response = await axios.post('/api/auth/login', data);
+    const response = await axios.post('/auth/login', data);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -40,7 +40,7 @@ export const login = createAsyncThunk('auth/login', async (data, { rejectWithVal
 
 export const getMe = createAsyncThunk('auth/getMe', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('/api/auth/me');
+    const response = await axios.get('/auth/me');
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -49,7 +49,7 @@ export const getMe = createAsyncThunk('auth/getMe', async (_, { rejectWithValue 
 
 export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
-    await axios.get('/api/auth/logout');
+    await axios.get('/auth/logout');
     return null;
   } catch (error) {
     return rejectWithValue(error.response.data);

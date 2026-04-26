@@ -16,8 +16,8 @@ const sendToken = async (res, user, message) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: false,     // true in production (https)
-            sameSite: "lax"
+            secure: true,     // true in production (https)
+            sameSite: "none"   // "none" for cross-origin
         });
 
         return res.status(200).json({
