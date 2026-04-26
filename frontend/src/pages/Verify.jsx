@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { verify, clearError } from '../store/authSlice';
+import { verify, clearError, resetVerified } from '../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
@@ -11,15 +11,19 @@ const Verify = () => {
   const [email, setEmail] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, error, verified } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (isAuthenticated) navigate('/dashboard');
+    if (verified) {
+      toast.success('Email verified! Please login.');
+      dispatch(resetVerified());
+      navigate('/login');
+    }
     if (error) {
       toast.error(error);
       dispatch(clearError());
     }
-  }, [isAuthenticated, error, navigate, dispatch]);
+  }, [verified, error, navigate, dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

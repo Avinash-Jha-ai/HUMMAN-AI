@@ -7,6 +7,7 @@ const initialState = {
   loading: false,
   error: null,
   verificationStep: false,
+  verified: false,
 };
 
 export const register = createAsyncThunk('auth/register', async (formData, { rejectWithValue }) => {
@@ -63,6 +64,9 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    resetVerified: (state) => {
+      state.verified = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -76,10 +80,9 @@ const authSlice = createSlice({
         state.error = action.payload?.message || 'Registration failed';
       })
       .addCase(verify.pending, (state) => { state.loading = true; })
-      .addCase(verify.fulfilled, (state, action) => {
+      .addCase(verify.fulfilled, (state) => {
         state.loading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
+        state.verified = true;
         state.verificationStep = false;
       })
       .addCase(verify.rejected, (state, action) => {
@@ -107,5 +110,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, resetVerified } = authSlice.actions;
 export default authSlice.reducer;
