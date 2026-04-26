@@ -227,13 +227,18 @@ export const verifyEmail = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email already verified. Please login.", success: false });
+    }
+
     if (!user.otp || user.otp !== otp) {
       return res.status(400).json({ message: "Invalid or expired OTP", success: false });
     }
 
 
     if (user.otpExpiry < Date.now()) {
-      return res.status(400).json({ message: "OTP expired" });
+      await userModel.findByIdAndDelete(user._id);
+      return res.status(400).json({ message: "OTP expired. Please register again.", success: false });
     }
 
     user.isVerified = true;
